@@ -1,6 +1,11 @@
 import "../pages/index.css";
 import { displayCards } from "../components/card.js";
-import { createCard, deleteCard, likeCard } from "../components/card.js";
+import {
+  createCard,
+  deleteCard,
+  likeCard,
+  openCard,
+} from "../components/card.js";
 import {
   openModal,
   closeModal,
@@ -81,7 +86,7 @@ addPlaceButton.addEventListener("click", () => {
       name: placeName.value,
       link: placeLink.value,
     };
-    const userCard = createCard(userCardData, deleteCard, likeCard); // создадим карточку
+    const userCard = createCard(userCardData, deleteCard, likeCard, openCard); // создадим карточку
     placesList.prepend(userCard); // вставим карточку в начало контейнера
     // после создания карточки из модального окна сотрём введённые пользователем данные
     placeName.value = "";

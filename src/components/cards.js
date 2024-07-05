@@ -1,7 +1,3 @@
-// массив первых 6 карточек страницы
-
-import { placesList } from "../scripts/index.js";
-
 export const initialCards = [
   {
     name: "Архыз",
