@@ -1,13 +1,12 @@
-// поиск DOM-элементов
-// навешивание слушателей на эти элементы
-// обработчики submit
-// обработчик открытия модального окна редактирования
-// обработчик открытия модального окна добавления карточки
-// отображение шести карточек при открытии страницы
-
 import "../pages/index.css";
-import { createCard, deleteCard, displayCards } from "../components/cards.js";
-import { openModal, closeModal } from "../components/modal.js";
+import { displayCards } from "../components/cards.js";
+import { createCard, deleteCard, likeCard } from "../components/card.js";
+import {
+  openModal,
+  closeModal,
+  closeOverlay,
+  closeEsc,
+} from "../components/modal.js";
 
 // @todo: Темплейт карточки
 export const cardTemplate = document.querySelector("#card-template").content;
@@ -21,7 +20,7 @@ export const modalImage = document.querySelector(".popup_type_image");
 // достанем кнопку редактирования
 const editProfileButton = document.querySelector(".profile__edit-button");
 
-// опишем логику модального окна после нажатия на кнопку редактирования
+// опишем логику открытия модального окна после нажатия на кнопку редактирования
 editProfileButton.addEventListener("click", () => {
   openModal(modalEditProfile); // при клике откроем модальное окно
 
@@ -31,9 +30,7 @@ editProfileButton.addEventListener("click", () => {
   const formEditProfile = document.forms["edit-profile"]; // вынесем форму в отдельную переменную для удобства обращения
   const inputProfileTitle = formEditProfile.elements.name; // обратились к полям формы, нашли поле с именем name
   inputProfileTitle.value = profileTitle.textContent; // полю с именем name присвоили значение имени, отображаемое на странице
-
-  // аналогично поступим с описанием профиля
-  const inputProfileDescription = formEditProfile.elements.description;
+  const inputProfileDescription = formEditProfile.elements.description; // нашли поле с именем description
   inputProfileDescription.value = profileDescription.textContent;
 
   // далее пропишем логику сохранения введённых пользователем данных
@@ -57,25 +54,10 @@ editProfileButton.addEventListener("click", () => {
   });
 
   // логика закрытия модального окна при нажатии на оверлей
-  modalEditProfile.addEventListener("click", function closeOverlay(event) {
-    // оверлей имеет класс .popup_type_edit, а само модальное окно — это уже его дочерний элемент
-    // поэтому мы проверим, произошел ли клик чисто на оверлее, то есть напрямую на элементе с классом .popup_type_edit,
-    // или на его дочерних элементах — модальном окне.
-
-    if (event.target === modalEditProfile) {
-      // event.target вернёт элемент, на котором произошел клик
-      closeModal(modalEditProfile);
-      modalEditProfile.removeEventListener("click", closeOverlay);
-    }
-  });
+  modalEditProfile.addEventListener("click", closeOverlay);
 
   // логика закрытия модального окна при нажатии на Escape
-  document.addEventListener("keydown", function closeKey(event) {
-    if (event.key === "Escape") {
-      closeModal(modalEditProfile);
-      document.removeEventListener("keydown", closeKey);
-    }
-  });
+  modalEditProfile.addEventListener("keydown", closeEsc);
 });
 
 // Проделаем то же самое, но с модальным окном добавления новой карточки
@@ -90,6 +72,7 @@ addPlaceButton.addEventListener("click", () => {
   const placeName = formAddPlace.elements["place-name"];
   const placeLink = formAddPlace.elements.link;
   // далее повесим обработчик на событиие submit формы
+
   formAddPlace.addEventListener("submit", function submitAddPlace(event) {
     event.preventDefault();
     // здесь нам надо сделать так, чтобы данные попали в функцию создания карточки createCard, которая в свою очередь принимает объект
@@ -98,7 +81,7 @@ addPlaceButton.addEventListener("click", () => {
       name: placeName.value,
       link: placeLink.value,
     };
-    const userCard = createCard(userCardData, deleteCard); // создадим карточку
+    const userCard = createCard(userCardData, deleteCard, likeCard); // создадим карточку
     placesList.prepend(userCard); // вставим карточку в начало контейнера
     // после создания карточки из модального окна сотрём введённые пользователем данные
     placeName.value = "";
@@ -116,19 +99,8 @@ addPlaceButton.addEventListener("click", () => {
   });
 
   // повесим слушатель клика по оверлею
-  modalAddPlace.addEventListener("click", function closeOverlay(event) {
-    if (event.target === modalAddPlace) {
-      // event.target вернёт элемент, на котором произошел клик
-      closeModal(modalAddPlace);
-      modalAddPlace.removeEventListener("click", closeOverlay);
-    }
-  });
-  document.addEventListener("keydown", function escapeClose(event) {
-    if (event.key === "Escape") {
-      closeModal(modalAddPlace);
-      document.removeEventListener("keydown", escapeClose);
-    }
-  });
+  modalAddPlace.addEventListener("click", closeOverlay);
+  modalAddPlace.addEventListener("keydown", closeEsc);
 });
 
 displayCards(); // вывели карточки
