@@ -1,7 +1,6 @@
 // массив первых 6 карточек страницы
 
 import { placesList } from "../scripts/index.js";
-import { createCard, deleteCard, likeCard } from "./card.js";
 
 export const initialCards = [
   {
@@ -29,10 +28,3 @@ export const initialCards = [
     link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
   },
 ];
-
-// @todo: Вывести карточки на страницу
-export function displayCards() {
-  for (const place of initialCards) {
-    placesList.append(createCard(place, deleteCard, likeCard));
-  }
-}

@@ -1,8 +1,8 @@
 // обработчик лайка карточки — будет
 
 // @todo: Функция создания карточки
-
-import { cardTemplate, modalImage } from "../scripts/index.js";
+import { initialCards } from "./cards.js";
+import { placesList, cardTemplate, modalImage } from "../scripts/index.js";
 import { openModal, closeModal } from "./modal.js";
 
 export function createCard(cardData, deleteCard, likeCard) {
@@ -74,5 +74,12 @@ export function likeCard(event) {
     event.target.style.background = "url('images/like-inactive.svg')";
   } else {
     event.target.style.background = "url('images/like-active.svg')";
+  }
+}
+
+// @todo: Вывести карточки на страницу
+export function displayCards() {
+  for (const place of initialCards) {
+    placesList.append(createCard(place, deleteCard, likeCard));
   }
 }
