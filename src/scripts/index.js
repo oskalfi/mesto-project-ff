@@ -22,6 +22,11 @@ export const modalEditProfile = document.querySelector(".popup_type_edit");
 export const modalAddPlace = document.querySelector(".popup_type_new-card");
 export const modalImage = document.querySelector(".popup_type_image");
 
+// сразу повесим на них класс is-animated, чтобы при первом же открытии они открывались плавно
+modalEditProfile.classList.add("popup_is-animated");
+modalAddPlace.classList.add("popup_is-animated");
+modalImage.classList.add("popup_is-animated");
+
 // достанем кнопку редактирования
 const editProfileButton = document.querySelector(".profile__edit-button");
 

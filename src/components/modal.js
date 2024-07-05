@@ -1,13 +1,18 @@
 export function openModal(modalWindow) {
-  // открытие модального окна
-  modalWindow.style.display = "grid";
+  // делаем модальное окно видимым
+  modalWindow.classList.add("popup_is-opened");
+
+  // ставим на модальное окно него атрибут tabIndex, чтобы была возможность использовать функцию focus()
   modalWindow.setAttribute("tabindex", "-1");
+
+  // используем функцию focus(), чтобы не вешать слушатель события на document, а повесить его именно на модальное окно
+  // так как в функции обработчике я использовал this.
   modalWindow.focus();
 }
 
 export function closeModal(modalWindow) {
   // закрытие модального окна
-  modalWindow.style.display = "none";
+  modalWindow.classList.remove("popup_is-opened");
 }
 
 // закрытие при клике на оверлей
