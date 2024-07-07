@@ -1,7 +1,11 @@
 // @todo: Функция создания карточки
-import { cardTemplate } from "../scripts/index.js";
-
-export function createCard(cardData, openCard, deleteCard, likeCard) {
+export function createCard(
+  cardTemplate,
+  cardData,
+  openCard,
+  deleteCard,
+  likeCard
+) {
   // создадим карточку
   // сначала достанем шаблон из разметки
   const card = cardTemplate.querySelector(".card").cloneNode(true);
