@@ -83,6 +83,8 @@ const editProfileButton = document.querySelector(".profile__edit-button");
 // опишем логику открытия модального окна после нажатия на кнопку редактирования
 editProfileButton.addEventListener("click", () => {
   openModal(modalEditProfile); // при клике откроем модальное окно
+  const formElement = document.forms["edit-profile"];
+  clearValidation(formElement);
   inputProfileTitle.value = profileTitle.textContent; // полю с именем name присвоили значение имени, отображаемое на странице
   inputProfileDescription.value = profileDescription.textContent;
 });
@@ -91,6 +93,10 @@ editProfileButton.addEventListener("click", () => {
 const addPlaceButton = document.querySelector(".profile__add-button"); // Достали кнопку «+» из разметки
 addPlaceButton.addEventListener("click", () => {
   openModal(modalAddPlace);
+  placeName.value = "";
+  placeLink.value = "";
+  const formElement = document.forms["new-place"];
+  clearValidation(formElement);
 });
 
 export function openCard(event) {

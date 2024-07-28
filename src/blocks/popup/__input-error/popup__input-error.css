@@ -1,0 +1,10 @@
+.popup__input-error {
+  display: block;
+  position: absolute;
+  font-size: 12px;
+  color: #ff0000;
+}
+
+.popup__input-error:last-of-type {
+  padding-top: 5px;
+}
