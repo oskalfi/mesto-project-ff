@@ -17,14 +17,20 @@
 // кнопку активной или отключенной. Данная функция вызывается в первый раз из функции setEventListeners(), чтобы кнопка была неактивна до ввода данных
 // а затем из обработчика события input поля ввода.
 
-const regex = /[^a-zа-яё\s\-]/iu;
+export function isValid(formElement, inputElement) {
+  // валидация рег.выражениями
+  const regex = /[^a-zа-яё\s\-]/iu;
+  const regexSpaces = /^\s+/;
 
-function isValid(formElement, inputElement) {
   if (regex.test(inputElement.value) && inputElement.type !== "url") {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+  } else if (regexSpaces.test(inputElement.value)) {
+    inputElement.setCustomValidity("Пробел в начале строки");
   } else {
     inputElement.setCustomValidity("");
   }
+
+  // валидация атрибутами
   if (!inputElement.validity.valid) {
     showInputError(formElement, inputElement, inputElement.validationMessage);
   } else {
@@ -32,19 +38,19 @@ function isValid(formElement, inputElement) {
   }
 }
 
-function showInputError(formElement, inputElement, errorMessage) {
+export function showInputError(formElement, inputElement, errorMessage) {
   inputElement.classList.add("popup__input-type-error");
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   errorElement.textContent = errorMessage;
 }
 
-function hideInputError(formElement, inputElement) {
+export function hideInputError(formElement, inputElement) {
   inputElement.classList.remove("popup__input-type-error");
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   errorElement.textContent = "";
 }
 
-function setEventListeners(formElement) {
+export function setEventListeners(formElement) {
   const inputList = Array.from(formElement.querySelectorAll(".popup__input"));
   const buttonElement = formElement.querySelector(".popup__button");
   toggleButtonState(inputList, buttonElement);
@@ -56,20 +62,20 @@ function setEventListeners(formElement) {
   });
 }
 
-function enableValidation() {
+export function enableValidation() {
   const formList = Array.from(document.querySelectorAll(".popup__form"));
   formList.forEach((formElement) => {
     setEventListeners(formElement);
   });
 }
 
-function hasInvalidInput(inputList) {
+export function hasInvalidInput(inputList) {
   return inputList.some((inputElement) => {
     return !inputElement.validity.valid;
   });
 }
 
-function toggleButtonState(inputList, buttonElement) {
+export function toggleButtonState(inputList, buttonElement) {
   if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true;
     buttonElement.classList.add("popup__button_inactive");
@@ -79,7 +85,7 @@ function toggleButtonState(inputList, buttonElement) {
   }
 }
 
-function clearValidation(formElement) {
+export function clearValidation(formElement) {
   const inputList = Array.from(formElement.querySelectorAll(".popup__input"));
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement);

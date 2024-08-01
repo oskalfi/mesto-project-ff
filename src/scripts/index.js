@@ -1,5 +1,4 @@
 import "../pages/index.css";
-import { initialCards } from "../components/cards.js";
 
 import {
   openModal,
@@ -8,6 +7,25 @@ import {
 } from "../components/modal.js";
 
 import { createCard, deleteCard, likeCard } from "../components/card.js";
+
+import {
+  isValid,
+  showInputError,
+  hideInputError,
+  setEventListeners,
+  enableValidation,
+  hasInvalidInput,
+  toggleButtonState,
+  clearValidation,
+} from "./validation.js";
+
+import {
+  config,
+  getProfileInfo,
+  getCards,
+  editProfileInfo,
+  makeNewCard,
+} from "./api.js";
 
 // @todo: Темплейт карточки
 export const cardTemplate = document.querySelector("#card-template").content;
@@ -42,6 +60,7 @@ function submitAddPlace(event) {
     name: placeName.value,
     link: placeLink.value,
   };
+  makeNewCard(placeName.value, placeLink.value);
   const userCard = createCard(
     cardTemplate,
     userCardData,
@@ -63,6 +82,7 @@ formAddPlace.addEventListener("submit", submitAddPlace);
 //сделаем так, чтобы поля формы были заполнены теми данными, которые отображаются на странице
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const profileImage = document.querySelector(".profile__image");
 const formEditProfile = document.forms["edit-profile"]; // вынесем форму в отдельную переменную
 const inputProfileTitle = formEditProfile.elements.name; // обратились к полям формы, нашли поле с именем name
 const inputProfileDescription = formEditProfile.elements.description; // нашли поле с именем description
@@ -72,6 +92,7 @@ function submitEditProfile(event) {
   event.preventDefault();
   profileTitle.textContent = inputProfileTitle.value;
   profileDescription.textContent = inputProfileDescription.value;
+  editProfileInfo(profileTitle.textContent, profileDescription.textContent);
   closeModal(modalEditProfile);
 }
 
@@ -107,13 +128,10 @@ export function openCard(event) {
   modalImage.querySelector(".popup__caption").textContent = image.alt; // достали контейнер подписи изображения и добавили в него текст
 }
 
-// @todo: Вывести карточки на страницу
-export function displayCards(initialCards) {
-  for (const place of initialCards) {
-    placesList.append(
-      createCard(cardTemplate, place, openCard, deleteCard, likeCard)
-    );
-  }
-}
+enableValidation();
 
-displayCards(initialCards); // вывели карточки
+// ТЕСТ
+
+getProfileInfo(profileTitle, profileDescription, profileImage);
+
+getCards(createCard, placesList, cardTemplate, openCard, deleteCard, likeCard);
