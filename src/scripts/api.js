@@ -44,7 +44,6 @@ export const getCards = (
       return Promise.reject(`Ошибка: ${res.status}`);
     })
     .then((res) => {
-      console.log(res);
       for (const place of res) {
         placesList.append(
           createCard(
@@ -54,8 +53,9 @@ export const getCards = (
             deleteCard,
             likeCard,
             place.owner["_id"], // id создателя карточки
-            config.profileId // id нашего профиля
+            config.profileId, // id нашего профиля
             // если id не будут совпадать, то иконку удаления сотрём
+            place["_id"]
           )
         );
       }
@@ -84,6 +84,7 @@ export const editProfileInfo = (newName, newAbout) => {
       return Promise.reject(`Ошибка: ${res.status}`);
     })
     .then((res) => {
+      console.log("New profile info");
       console.log(res);
     })
     .catch((error) => {
@@ -116,4 +117,13 @@ export const makeNewCard = (placeName, imageLink) => {
     .catch((error) => {
       console.log(error);
     });
+};
+
+export const deleteCardFromServer = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: "DELETE",
+    headers: {
+      authorization: "bd73c30f-b229-43da-9111-af67cbae75e9",
+    },
+  });
 };

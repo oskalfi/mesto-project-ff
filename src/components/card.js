@@ -1,4 +1,6 @@
 // @todo: Функция создания карточки
+import { deleteCardFromServer } from "../scripts/api.js";
+
 export function createCard(
   cardTemplate,
   cardData,
@@ -6,7 +8,8 @@ export function createCard(
   deleteCard,
   likeCard,
   cardOwnerId,
-  currentProfileId
+  currentProfileId,
+  cardId
 ) {
   // создадим карточку
   // сначала достанем шаблон из разметки
@@ -22,7 +25,10 @@ export function createCard(
   const deleteButton = card.querySelector(".card__delete-button");
   // Повесим обработчик клика по кнопке удаления карточки
   if (cardOwnerId === currentProfileId) {
-    deleteButton.addEventListener("click", deleteCard);
+    deleteButton.addEventListener("click", (event) => {
+      deleteCardFromServer(cardId);
+      deleteCard(event);
+    });
   } else {
     deleteButton.remove();
   }
