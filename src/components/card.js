@@ -4,7 +4,9 @@ export function createCard(
   cardData,
   openCard,
   deleteCard,
-  likeCard
+  likeCard,
+  cardOwnerId,
+  currentProfileId
 ) {
   // создадим карточку
   // сначала достанем шаблон из разметки
@@ -17,9 +19,13 @@ export function createCard(
   // добавим подпись карточке. Подпись === alt изображения
   card.querySelector(".card__title").textContent = cardData.name;
 
-  // Повесим обработчик клика по кнопке удаления карточки
   const deleteButton = card.querySelector(".card__delete-button");
-  deleteButton.addEventListener("click", deleteCard);
+  // Повесим обработчик клика по кнопке удаления карточки
+  if (cardOwnerId === currentProfileId) {
+    deleteButton.addEventListener("click", deleteCard);
+  } else {
+    deleteButton.remove();
+  }
 
   // повесим обработчик клика по кнопке
   const likeButton = card.querySelector(".card__like-button");

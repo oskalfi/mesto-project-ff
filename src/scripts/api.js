@@ -21,6 +21,7 @@ export const getProfileInfo = (
       profileTitleContainer.textContent = res.name;
       profileDescriptionContainer.textContent = res.about;
       profileImageContainer.style = `background-image: url(${res.avatar})`;
+      config.profileId = res["_id"];
     })
     .catch((err) => {
       console.log(err);
@@ -43,9 +44,19 @@ export const getCards = (
       return Promise.reject(`Ошибка: ${res.status}`);
     })
     .then((res) => {
+      console.log(res);
       for (const place of res) {
         placesList.append(
-          createCard(cardTemplate, place, openCard, deleteCard, likeCard)
+          createCard(
+            cardTemplate,
+            place,
+            openCard,
+            deleteCard,
+            likeCard,
+            place.owner["_id"], // id создателя карточки
+            config.profileId // id нашего профиля
+            // если id не будут совпадать, то иконку удаления сотрём
+          )
         );
       }
     })
