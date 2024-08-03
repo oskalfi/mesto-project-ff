@@ -1,5 +1,5 @@
 // @todo: Функция создания карточки
-import { deleteCardFromServer, putLike } from "../scripts/api.js";
+import { deleteCardFromServer, putLike, unlike } from "../scripts/api.js";
 
 export function createCard(
   cardTemplate,
@@ -42,8 +42,7 @@ export function createCard(
   // повесим обработчик клика по кнопке
   const likeButton = card.querySelector(".card__like-button");
   likeButton.addEventListener("click", (event) => {
-    putLike(cardId, cardLikesContainer);
-    likeCard(event);
+    likeCard(event, cardId, cardLikesContainer);
   });
 
   // проверим, ставил ли текущий пользователь лайк на карточку
@@ -68,9 +67,15 @@ export function deleteCard(event) {
   listItem.remove();
 }
 
-function unlikeCard(event) {}
-
 // функция лайка карточки
-export function likeCard(event) {
-  event.target.classList.toggle("card__like-button_is-active");
+export function likeCard(event, cardId, cardLikesContainer) {
+  if (event.target.className.includes("is-active")) {
+    console.log("Вы сняли лайк!");
+    unlike(cardId, cardLikesContainer);
+    event.target.classList.toggle("card__like-button_is-active");
+  } else {
+    console.log("Вы поставили лайк!");
+    putLike(cardId, cardLikesContainer);
+    event.target.classList.toggle("card__like-button_is-active");
+  }
 }

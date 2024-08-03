@@ -8,16 +8,7 @@ import {
 
 import { createCard, deleteCard, likeCard } from "../components/card.js";
 
-import {
-  isValid,
-  showInputError,
-  hideInputError,
-  setEventListeners,
-  enableValidation,
-  hasInvalidInput,
-  toggleButtonState,
-  clearValidation,
-} from "./validation.js";
+import { enableValidation, clearValidation } from "./validation.js";
 
 import {
   config,

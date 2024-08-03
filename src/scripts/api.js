@@ -143,7 +143,27 @@ export const putLike = (cardId, cardLikesContainer) => {
       Promise.reject(`Ошибка: ${res.status}`);
     })
     .then((res) => {
-      console.log(res);
+      cardLikesContainer.textContent = res.likes.length;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const unlike = (cardId, cardLikesContainer) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "DELETE",
+    headers: {
+      authorization: "bd73c30f-b229-43da-9111-af67cbae75e9",
+    },
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .then((res) => {
       cardLikesContainer.textContent = res.likes.length;
     })
     .catch((error) => {
