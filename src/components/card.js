@@ -1,5 +1,5 @@
 // @todo: Функция создания карточки
-import { deleteCardFromServer } from "../scripts/api.js";
+import { deleteCardFromServer, putLike } from "../scripts/api.js";
 
 export function createCard(
   cardTemplate,
@@ -9,7 +9,8 @@ export function createCard(
   likeCard,
   cardOwnerId,
   currentProfileId,
-  cardId
+  cardId,
+  cardLikesValue
 ) {
   // создадим карточку
   // сначала достанем шаблон из разметки
@@ -19,12 +20,17 @@ export function createCard(
   // присвоим значения атрибутам src и alt. Возьмём их из импортированного массива объектов initialCards
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
+
+  const cardLikesContainer = card.querySelector(".card__like-button-likes"); // выведем количество лайков
+  cardLikesContainer.textContent = cardLikesValue.length;
+
   // добавим подпись карточке. Подпись === alt изображения
   card.querySelector(".card__title").textContent = cardData.name;
 
   const deleteButton = card.querySelector(".card__delete-button");
   // Повесим обработчик клика по кнопке удаления карточки
   if (cardOwnerId === currentProfileId) {
+    // если текущий пользователь создатель карточки — тогда добавляем функцию удаления, иначе удаляем иконку удаления
     deleteButton.addEventListener("click", (event) => {
       deleteCardFromServer(cardId);
       deleteCard(event);
@@ -35,7 +41,18 @@ export function createCard(
 
   // повесим обработчик клика по кнопке
   const likeButton = card.querySelector(".card__like-button");
-  likeButton.addEventListener("click", likeCard);
+  likeButton.addEventListener("click", (event) => {
+    putLike(cardId, cardLikesContainer);
+    likeCard(event);
+  });
+
+  // проверим, ставил ли текущий пользователь лайк на карточку
+  // если да — добавим кнопке лайка класс active
+  cardLikesValue.forEach((like) => {
+    if (like["_id"] === currentProfileId) {
+      likeButton.classList.add("card__like-button_is-active");
+    }
+  });
 
   // повесим обработчик клика по изображению
   cardImage.addEventListener("click", openCard);
@@ -50,6 +67,8 @@ export function deleteCard(event) {
   const listItem = event.target.closest(".card");
   listItem.remove();
 }
+
+function unlikeCard(event) {}
 
 // функция лайка карточки
 export function likeCard(event) {

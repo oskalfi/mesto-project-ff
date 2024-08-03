@@ -55,7 +55,8 @@ export const getCards = (
             place.owner["_id"], // id создателя карточки
             config.profileId, // id нашего профиля
             // если id не будут совпадать, то иконку удаления сотрём
-            place["_id"]
+            place["_id"],
+            place.likes // передадим количество лайков
           )
         );
       }
@@ -126,4 +127,26 @@ export const deleteCardFromServer = (cardId) => {
       authorization: "bd73c30f-b229-43da-9111-af67cbae75e9",
     },
   });
+};
+
+export const putLike = (cardId, cardLikesContainer) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "PUT",
+    headers: {
+      authorization: "bd73c30f-b229-43da-9111-af67cbae75e9",
+    },
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .then((res) => {
+      console.log(res);
+      cardLikesContainer.textContent = res.likes.length;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
