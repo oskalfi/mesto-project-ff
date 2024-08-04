@@ -26,6 +26,7 @@ export const placesList = document.querySelector(".places__list");
 export const modalEditProfile = document.querySelector(".popup_type_edit");
 export const modalAddPlace = document.querySelector(".popup_type_new-card");
 export const modalImage = document.querySelector(".popup_type_image");
+export const modalAvatar = document.querySelector(".popup_type_avatar");
 
 // повесим на все модальные окна слушатели клика по оверлею и кнопке закрытия, а также добавим им класс is-animated,
 // чтобы при первом же открытии они открывались плавно
@@ -51,15 +52,19 @@ function submitAddPlace(event) {
     name: placeName.value,
     link: placeLink.value,
   };
-  makeNewCard(placeName.value, placeLink.value);
-  const userCard = createCard(
+
+  const userCard = makeNewCard(
+    placeName.value,
+    placeLink.value,
     cardTemplate,
     userCardData,
     openCard,
     deleteCard,
-    likeCard
-  ); // создадим карточку
-  placesList.prepend(userCard); // вставим карточку в начало контейнера
+    likeCard,
+    createCard,
+    placesList
+  ); // создадим карточку, отправим её на сервер, и вставим в разметку
+
   // после создания карточки из модального окна сотрём введённые пользователем данные
   placeName.value = "";
   placeLink.value = "";
@@ -109,6 +114,12 @@ addPlaceButton.addEventListener("click", () => {
   placeLink.value = "";
   const formElement = document.forms["new-place"];
   clearValidation(formElement);
+});
+
+// Добавим открытие модального окна изменения аватара
+const profileAvatar = document.querySelector(".profile__image");
+profileAvatar.addEventListener("click", () => {
+  openModal(modalAvatar);
 });
 
 export function openCard(event) {

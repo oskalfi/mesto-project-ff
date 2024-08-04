@@ -93,7 +93,17 @@ export const editProfileInfo = (newName, newAbout) => {
     });
 };
 
-export const makeNewCard = (placeName, imageLink) => {
+export const makeNewCard = (
+  placeName,
+  imageLink,
+  cardTemplate,
+  userCardData,
+  openCard,
+  deleteCard,
+  likeCard,
+  createCard,
+  placesList
+) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: {
@@ -114,6 +124,18 @@ export const makeNewCard = (placeName, imageLink) => {
     .then((res) => {
       console.log("New card:");
       console.log(res);
+      const userCard = createCard(
+        cardTemplate,
+        userCardData,
+        openCard,
+        deleteCard,
+        likeCard,
+        res.owner["_id"],
+        config.profileId,
+        res["_id"],
+        res.likes
+      );
+      placesList.prepend(userCard); // вставим карточку в начало контейнера
     })
     .catch((error) => {
       console.log(error);

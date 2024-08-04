@@ -7,6 +7,31 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  position: relative;
+  display: grid;
+}
+
+.profile__image::after {
+  color: aliceblue;
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0);
+}
+
+.profile__image-edit-icon {
+  margin: auto;
+  z-index: 9;
+  visibility: hidden;
+}
+
+.profile__image:hover::after {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.profile__image:hover .profile__image-edit-icon {
+  visibility: visible;
 }
 
 @media screen and (max-width: 740px) {
