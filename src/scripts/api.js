@@ -66,7 +66,7 @@ export const getCards = (
     });
 };
 
-export const editProfileInfo = (newName, newAbout) => {
+export const editProfileInfo = (newName, newAbout, button) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: {
@@ -87,9 +87,11 @@ export const editProfileInfo = (newName, newAbout) => {
     .then((res) => {
       console.log("New profile info");
       console.log(res);
+      button.textContent = "Сохранить";
     })
     .catch((error) => {
       console.log(error);
+      button.textContent = "Сохранить";
     });
 };
 
@@ -187,6 +189,31 @@ export const unlike = (cardId, cardLikesContainer) => {
     })
     .then((res) => {
       cardLikesContainer.textContent = res.likes.length;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const changeAvatar = (link, profileAvatarContainer) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: "PATCH",
+    headers: {
+      authorization: "bd73c30f-b229-43da-9111-af67cbae75e9",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      avatar: link,
+    }),
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .then((res) => {
+      profileAvatarContainer.style = `background-image: url(${res.avatar})`;
     })
     .catch((error) => {
       console.log(error);

@@ -16,6 +16,7 @@ import {
   getCards,
   editProfileInfo,
   makeNewCard,
+  changeAvatar,
 } from "./api.js";
 
 // @todo: Темплейт карточки
@@ -82,13 +83,19 @@ const profileImage = document.querySelector(".profile__image");
 const formEditProfile = document.forms["edit-profile"]; // вынесем форму в отдельную переменную
 const inputProfileTitle = formEditProfile.elements.name; // обратились к полям формы, нашли поле с именем name
 const inputProfileDescription = formEditProfile.elements.description; // нашли поле с именем description
+const buttonSubmitEditProfile = formEditProfile.querySelector(".button");
 
 function submitEditProfile(event) {
   // опишем логику
   event.preventDefault();
+  buttonSubmitEditProfile.textContent = "Сохранение..."; // улучшим UX. Перед выполнением запроса на сервер изменим текст кнопки
   profileTitle.textContent = inputProfileTitle.value;
   profileDescription.textContent = inputProfileDescription.value;
-  editProfileInfo(profileTitle.textContent, profileDescription.textContent);
+  editProfileInfo(
+    profileTitle.textContent,
+    profileDescription.textContent,
+    buttonSubmitEditProfile // передадим элемент кнопки, чтобы после выполнения промиса текст кнопки снова поменять на «Сохранить»
+  );
   closeModal(modalEditProfile);
 }
 
@@ -116,10 +123,24 @@ addPlaceButton.addEventListener("click", () => {
   clearValidation(formElement);
 });
 
+// 3. Модальное окно изменения аватара
 // Добавим открытие модального окна изменения аватара
 const profileAvatar = document.querySelector(".profile__image");
+const formChangeAvatar = document.forms["edit-avatar"];
+const linkInput = modalAvatar.querySelector("#avatar-input");
+
+function submitChangeAvatar(event) {
+  event.preventDefault();
+  changeAvatar(linkInput.value, profileAvatar);
+  closeModal(modalAvatar);
+}
+
+formChangeAvatar.addEventListener("submit", submitChangeAvatar);
+
 profileAvatar.addEventListener("click", () => {
   openModal(modalAvatar);
+  linkInput.value = "";
+  clearValidation(formChangeAvatar);
 });
 
 export function openCard(event) {
