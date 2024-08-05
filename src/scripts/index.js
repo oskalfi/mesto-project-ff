@@ -19,6 +19,16 @@ import {
   changeAvatar,
 } from "./api.js";
 
+const validationConfig = {
+  // объект классов и селекторов для валидации
+  formSelector: ".popup__form",
+  formInputSelector: ".popup__input",
+  formButtonSelector: ".popup__button",
+  inputTypeErrorClass: "popup__input-type-error",
+  buttonTypeInactiveClass: "popup__button_inactive",
+  buttonTypeActiveClass: "popup__button_inactive",
+};
+
 // @todo: Темплейт карточки
 export const cardTemplate = document.querySelector("#card-template").content;
 export const placesList = document.querySelector(".places__list");
@@ -54,17 +64,20 @@ function submitAddPlace(event) {
     link: placeLink.value,
   };
 
-  const userCard = makeNewCard(
-    placeName.value,
-    placeLink.value,
-    cardTemplate,
-    userCardData,
-    openCard,
-    deleteCard,
-    likeCard,
-    createCard,
-    placesList
-  ); // создадим карточку, отправим её на сервер, и вставим в разметку
+  const userCard = makeNewCard(placeName.value, placeLink.value).then((res) => {
+    const userCard = createCard(
+      cardTemplate,
+      userCardData,
+      openCard,
+      deleteCard,
+      likeCard,
+      res.owner["_id"],
+      config.profileId,
+      res["_id"],
+      res.likes
+    );
+    placesList.prepend(userCard); // вставим карточку в начало контейнера
+  }); // создадим карточку, отправим её на сервер, и вставим в разметку
 
   // после создания карточки из модального окна сотрём введённые пользователем данные
   placeName.value = "";
@@ -95,7 +108,9 @@ function submitEditProfile(event) {
     profileTitle.textContent,
     profileDescription.textContent,
     buttonSubmitEditProfile // передадим элемент кнопки, чтобы после выполнения промиса текст кнопки снова поменять на «Сохранить»
-  );
+  ).then((res) => {
+    buttonSubmitEditProfile.textContent = "Сохранить";
+  });
   closeModal(modalEditProfile);
 }
 
@@ -108,7 +123,7 @@ const editProfileButton = document.querySelector(".profile__edit-button");
 editProfileButton.addEventListener("click", () => {
   openModal(modalEditProfile); // при клике откроем модальное окно
   const formElement = document.forms["edit-profile"];
-  clearValidation(formElement);
+  clearValidation(formElement, validationConfig);
   inputProfileTitle.value = profileTitle.textContent; // полю с именем name присвоили значение имени, отображаемое на странице
   inputProfileDescription.value = profileDescription.textContent;
 });
@@ -120,7 +135,7 @@ addPlaceButton.addEventListener("click", () => {
   placeName.value = "";
   placeLink.value = "";
   const formElement = document.forms["new-place"];
-  clearValidation(formElement);
+  clearValidation(formElement, validationConfig);
 });
 
 // 3. Модальное окно изменения аватара
@@ -131,7 +146,9 @@ const linkInput = modalAvatar.querySelector("#avatar-input");
 
 function submitChangeAvatar(event) {
   event.preventDefault();
-  changeAvatar(linkInput.value, profileAvatar);
+  changeAvatar(linkInput.value, profileAvatar).then((res) => {
+    profileAvatar.style = `background-image: url(${res.avatar})`;
+  });
   closeModal(modalAvatar);
 }
 
@@ -140,7 +157,7 @@ formChangeAvatar.addEventListener("submit", submitChangeAvatar);
 profileAvatar.addEventListener("click", () => {
   openModal(modalAvatar);
   linkInput.value = "";
-  clearValidation(formChangeAvatar);
+  clearValidation(formChangeAvatar, validationConfig);
 });
 
 export function openCard(event) {
@@ -151,10 +168,32 @@ export function openCard(event) {
   modalImage.querySelector(".popup__caption").textContent = image.alt; // достали контейнер подписи изображения и добавили в него текст
 }
 
-enableValidation();
+enableValidation(validationConfig);
 
 // ТЕСТ
 
-getProfileInfo(profileTitle, profileDescription, profileImage);
+getProfileInfo(profileTitle, profileDescription, profileImage).then((res) => {
+  profileTitle.textContent = res.name;
+  profileDescription.textContent = res.about;
+  profileImage.style = `background-image: url(${res.avatar})`;
+  config.profileId = res["_id"];
+});
 
-getCards(createCard, placesList, cardTemplate, openCard, deleteCard, likeCard);
+getCards().then((res) => {
+  for (const place of res) {
+    placesList.append(
+      createCard(
+        cardTemplate,
+        place,
+        openCard,
+        deleteCard,
+        likeCard,
+        place.owner["_id"], // id создателя карточки
+        config.profileId, // id нашего профиля
+        // если id не будут совпадать, то иконку удаления сотрём
+        place["_id"],
+        place.likes // передадим количество лайков
+      )
+    );
+  }
+});

@@ -71,11 +71,15 @@ export function deleteCard(event) {
 export function likeCard(event, cardId, cardLikesContainer) {
   if (event.target.className.includes("is-active")) {
     console.log("Вы сняли лайк!");
-    unlike(cardId, cardLikesContainer);
+    unlike(cardId, cardLikesContainer).then((res) => {
+      cardLikesContainer.textContent = res.likes.length;
+    });
     event.target.classList.toggle("card__like-button_is-active");
   } else {
     console.log("Вы поставили лайк!");
-    putLike(cardId, cardLikesContainer);
+    putLike(cardId, cardLikesContainer).then((res) => {
+      cardLikesContainer.textContent = res.likes.length;
+    });
     event.target.classList.toggle("card__like-button_is-active");
   }
 }

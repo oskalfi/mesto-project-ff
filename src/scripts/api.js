@@ -17,12 +17,6 @@ export const getProfileInfo = (
       }
       return Promise.reject(`Ошибка: ${res.status}`);
     })
-    .then((res) => {
-      profileTitleContainer.textContent = res.name;
-      profileDescriptionContainer.textContent = res.about;
-      profileImageContainer.style = `background-image: url(${res.avatar})`;
-      config.profileId = res["_id"];
-    })
     .catch((err) => {
       console.log(err);
     });
@@ -42,24 +36,6 @@ export const getCards = (
         return res.json();
       }
       return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .then((res) => {
-      for (const place of res) {
-        placesList.append(
-          createCard(
-            cardTemplate,
-            place,
-            openCard,
-            deleteCard,
-            likeCard,
-            place.owner["_id"], // id создателя карточки
-            config.profileId, // id нашего профиля
-            // если id не будут совпадать, то иконку удаления сотрём
-            place["_id"],
-            place.likes // передадим количество лайков
-          )
-        );
-      }
     })
     .catch((error) => {
       console.log(error);
@@ -83,11 +59,6 @@ export const editProfileInfo = (newName, newAbout, button) => {
         return res.json();
       }
       return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .then((res) => {
-      console.log("New profile info");
-      console.log(res);
-      button.textContent = "Сохранить";
     })
     .catch((error) => {
       console.log(error);
@@ -123,22 +94,6 @@ export const makeNewCard = (
       }
       return Promise.reject(`Ошибка: ${res.status}`);
     })
-    .then((res) => {
-      console.log("New card:");
-      console.log(res);
-      const userCard = createCard(
-        cardTemplate,
-        userCardData,
-        openCard,
-        deleteCard,
-        likeCard,
-        res.owner["_id"],
-        config.profileId,
-        res["_id"],
-        res.likes
-      );
-      placesList.prepend(userCard); // вставим карточку в начало контейнера
-    })
     .catch((error) => {
       console.log(error);
     });
@@ -166,9 +121,6 @@ export const putLike = (cardId, cardLikesContainer) => {
       }
       Promise.reject(`Ошибка: ${res.status}`);
     })
-    .then((res) => {
-      cardLikesContainer.textContent = res.likes.length;
-    })
     .catch((error) => {
       console.log(error);
     });
@@ -186,9 +138,6 @@ export const unlike = (cardId, cardLikesContainer) => {
         return res.json();
       }
       Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .then((res) => {
-      cardLikesContainer.textContent = res.likes.length;
     })
     .catch((error) => {
       console.log(error);
@@ -211,9 +160,6 @@ export const changeAvatar = (link, profileAvatarContainer) => {
         return res.json();
       }
       Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .then((res) => {
-      profileAvatarContainer.style = `background-image: url(${res.avatar})`;
     })
     .catch((error) => {
       console.log(error);
