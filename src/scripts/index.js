@@ -134,8 +134,7 @@ addPlaceButton.addEventListener("click", () => {
   openModal(modalAddPlace);
   placeName.value = "";
   placeLink.value = "";
-  const formElement = document.forms["new-place"];
-  clearValidation(formElement, validationConfig);
+  clearValidation(formAddPlace, validationConfig);
 });
 
 // 3. Модальное окно изменения аватара
@@ -160,27 +159,36 @@ profileAvatar.addEventListener("click", () => {
   clearValidation(formChangeAvatar, validationConfig);
 });
 
+const popupImageContainer = modalImage.querySelector(".popup__image");
+const popupImageCaption = modalImage.querySelector(".popup__caption");
+
 export function openCard(event) {
   openModal(modalImage); // показали попап
-  const image = modalImage.querySelector(".popup__image"); // достали в модальном окне контейнер для изображения
-  image.src = event.target.src;
-  image.alt = event.target.alt;
-  modalImage.querySelector(".popup__caption").textContent = image.alt; // достали контейнер подписи изображения и добавили в него текст
+  popupImageContainer.src = event.target.src;
+  popupImageContainer.alt = event.target.alt;
+  popupImageCaption.textContent = popupImageContainer.alt; // в качестве подписи взяли значение атрибута alt
 }
 
 enableValidation(validationConfig);
 
-// ТЕСТ
+// Далее следует запрос на сервер, для получения данных профиля и карточек
 
-getProfileInfo(profileTitle, profileDescription, profileImage).then((res) => {
-  profileTitle.textContent = res.name;
-  profileDescription.textContent = res.about;
-  profileImage.style = `background-image: url(${res.avatar})`;
-  config.profileId = res["_id"];
-});
+Promise.all([
+  getProfileInfo(profileTitle, profileDescription, profileImage),
+  getCards(),
+]).then((responseArray) => {
+  // разобъем ответ сервера на две отдельные переменные
+  const profileRes = responseArray[0];
+  const cardsRes = responseArray[1];
 
-getCards().then((res) => {
-  for (const place of res) {
+  // обработка данных профиля
+  profileTitle.textContent = profileRes.name;
+  profileDescription.textContent = profileRes.about;
+  profileImage.style = `background-image: url(${profileRes.avatar})`;
+  config.profileId = profileRes["_id"];
+
+  //обработка данных карточек
+  for (const place of cardsRes) {
     placesList.append(
       createCard(
         cardTemplate,
