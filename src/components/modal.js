@@ -2,9 +2,6 @@ export function openModal(modalWindow) {
   // делаем модальное окно видимым
   modalWindow.classList.add("popup_is-opened");
   document.addEventListener("keydown", closeEsc);
-  if (modalWindow.querySelector(".button")) {
-    modalWindow.querySelector(".button").disabled = "true";
-  }
 }
 
 export function closeModal(modalWindow) {

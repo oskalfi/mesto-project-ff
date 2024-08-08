@@ -5,41 +5,22 @@ export const config = {
   },
 };
 
-export const getProfileInfo = (
-  profileTitleContainer,
-  profileDescriptionContainer,
-  profileImageContainer
-) => {
-  return fetch(`${config.baseUrl}/users/me`, config)
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+export const getProfileInfo = () => {
+  return fetch(`${config.baseUrl}/users/me`, config).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
-export const getCards = (
-  createCard,
-  placesList,
-  cardTemplate,
-  openCard,
-  deleteCard,
-  likeCard
-) => {
-  return fetch(`${config.baseUrl}/cards`, config)
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+export const getCards = () => {
+  return fetch(`${config.baseUrl}/cards`, config).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 export const editProfileInfo = (newName, newAbout, button) => {
@@ -53,30 +34,15 @@ export const editProfileInfo = (newName, newAbout, button) => {
       name: newName,
       about: newAbout,
     }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((error) => {
-      console.log(error);
-      button.textContent = "Сохранить";
-    });
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
-export const makeNewCard = (
-  placeName,
-  imageLink,
-  cardTemplate,
-  userCardData,
-  openCard,
-  deleteCard,
-  likeCard,
-  createCard,
-  placesList
-) => {
+export const makeNewCard = (placeName, imageLink) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: {
@@ -87,16 +53,12 @@ export const makeNewCard = (
       name: placeName,
       link: imageLink,
     }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 export const deleteCardFromServer = (cardId) => {
@@ -108,43 +70,35 @@ export const deleteCardFromServer = (cardId) => {
   });
 };
 
-export const putLike = (cardId, cardLikesContainer) => {
+export const putLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: {
       authorization: "bd73c30f-b229-43da-9111-af67cbae75e9",
     },
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
-export const unlike = (cardId, cardLikesContainer) => {
+export const unlike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: {
       authorization: "bd73c30f-b229-43da-9111-af67cbae75e9",
     },
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
-export const changeAvatar = (link, profileAvatarContainer) => {
+export const changeAvatar = (link) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: {
@@ -154,14 +108,10 @@ export const changeAvatar = (link, profileAvatarContainer) => {
     body: JSON.stringify({
       avatar: link,
     }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    Promise.reject(`Ошибка: ${res.status}`);
+  });
 };

@@ -64,26 +64,29 @@ function submitAddPlace(event) {
     link: placeLink.value,
   };
 
-  const userCard = makeNewCard(placeName.value, placeLink.value).then((res) => {
-    const userCard = createCard(
-      cardTemplate,
-      userCardData,
-      openCard,
-      deleteCard,
-      likeCard,
-      res.owner["_id"],
-      config.profileId,
-      res["_id"],
-      res.likes
-    );
-    placesList.prepend(userCard); // вставим карточку в начало контейнера
-  }); // создадим карточку, отправим её на сервер, и вставим в разметку
-
-  // после создания карточки из модального окна сотрём введённые пользователем данные
-  placeName.value = "";
-  placeLink.value = "";
-  // после чего закроем модальное окно
-  closeModal(modalAddPlace);
+  makeNewCard(placeName.value, placeLink.value)
+    .then((res) => {
+      const userCard = createCard(
+        cardTemplate,
+        userCardData,
+        openCard,
+        deleteCard,
+        likeCard,
+        res.owner["_id"],
+        config.profileId,
+        res["_id"],
+        res.likes
+      );
+      placesList.prepend(userCard);
+      // создадим карточку, отправим её на сервер, и вставим в разметку в начало контейнера
+      placeName.value = "";
+      placeLink.value = "";
+      // после чего закроем модальное окно
+      closeModal(modalAddPlace);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 formAddPlace.addEventListener("submit", submitAddPlace);
@@ -108,10 +111,15 @@ function submitEditProfile(event) {
     profileTitle.textContent,
     profileDescription.textContent,
     buttonSubmitEditProfile // передадим элемент кнопки, чтобы после выполнения промиса текст кнопки снова поменять на «Сохранить»
-  ).then((res) => {
-    buttonSubmitEditProfile.textContent = "Сохранить";
-  });
-  closeModal(modalEditProfile);
+  )
+    .then((res) => {
+      buttonSubmitEditProfile.textContent = "Сохранить";
+      closeModal(modalEditProfile);
+    })
+    .catch((error) => {
+      console.log(error);
+      button.textContent = "Сохранить";
+    });
 }
 
 formEditProfile.addEventListener("submit", submitEditProfile);
@@ -122,8 +130,7 @@ const editProfileButton = document.querySelector(".profile__edit-button");
 // опишем логику открытия модального окна после нажатия на кнопку редактирования
 editProfileButton.addEventListener("click", () => {
   openModal(modalEditProfile); // при клике откроем модальное окно
-  const formElement = document.forms["edit-profile"];
-  clearValidation(formElement, validationConfig);
+  clearValidation(formEditProfile, validationConfig);
   inputProfileTitle.value = profileTitle.textContent; // полю с именем name присвоили значение имени, отображаемое на странице
   inputProfileDescription.value = profileDescription.textContent;
 });
@@ -132,8 +139,6 @@ editProfileButton.addEventListener("click", () => {
 const addPlaceButton = document.querySelector(".profile__add-button"); // Достали кнопку «+» из разметки
 addPlaceButton.addEventListener("click", () => {
   openModal(modalAddPlace);
-  placeName.value = "";
-  placeLink.value = "";
   clearValidation(formAddPlace, validationConfig);
 });
 
@@ -145,17 +150,21 @@ const linkInput = modalAvatar.querySelector("#avatar-input");
 
 function submitChangeAvatar(event) {
   event.preventDefault();
-  changeAvatar(linkInput.value, profileAvatar).then((res) => {
-    profileAvatar.style = `background-image: url(${res.avatar})`;
-  });
-  closeModal(modalAvatar);
+  changeAvatar(linkInput.value, profileAvatar)
+    .then((res) => {
+      profileAvatar.style = `background-image: url(${res.avatar})`;
+      linkInput.value = "";
+      closeModal(modalAvatar);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 formChangeAvatar.addEventListener("submit", submitChangeAvatar);
 
 profileAvatar.addEventListener("click", () => {
   openModal(modalAvatar);
-  linkInput.value = "";
   clearValidation(formChangeAvatar, validationConfig);
 });
 
@@ -176,32 +185,36 @@ enableValidation(validationConfig);
 Promise.all([
   getProfileInfo(profileTitle, profileDescription, profileImage),
   getCards(),
-]).then((responseArray) => {
-  // разобъем ответ сервера на две отдельные переменные
-  const profileRes = responseArray[0];
-  const cardsRes = responseArray[1];
+])
+  .then((responseArray) => {
+    // разобъем ответ сервера на две отдельные переменные
+    const profileRes = responseArray[0];
+    const cardsRes = responseArray[1];
 
-  // обработка данных профиля
-  profileTitle.textContent = profileRes.name;
-  profileDescription.textContent = profileRes.about;
-  profileImage.style = `background-image: url(${profileRes.avatar})`;
-  config.profileId = profileRes["_id"];
+    // обработка данных профиля
+    profileTitle.textContent = profileRes.name;
+    profileDescription.textContent = profileRes.about;
+    profileImage.style = `background-image: url(${profileRes.avatar})`;
+    config.profileId = profileRes["_id"];
 
-  //обработка данных карточек
-  for (const place of cardsRes) {
-    placesList.append(
-      createCard(
-        cardTemplate,
-        place,
-        openCard,
-        deleteCard,
-        likeCard,
-        place.owner["_id"], // id создателя карточки
-        config.profileId, // id нашего профиля
-        // если id не будут совпадать, то иконку удаления сотрём
-        place["_id"],
-        place.likes // передадим количество лайков
-      )
-    );
-  }
-});
+    //обработка данных карточек
+    for (const place of cardsRes) {
+      placesList.append(
+        createCard(
+          cardTemplate,
+          place,
+          openCard,
+          deleteCard,
+          likeCard,
+          place.owner["_id"], // id создателя карточки
+          config.profileId, // id нашего профиля
+          // если id не будут совпадать, то иконку удаления сотрём
+          place["_id"],
+          place.likes // передадим количество лайков
+        )
+      );
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+  });

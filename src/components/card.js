@@ -71,15 +71,23 @@ export function deleteCard(event) {
 export function likeCard(event, cardId, cardLikesContainer) {
   if (event.target.className.includes("is-active")) {
     console.log("Вы сняли лайк!");
-    unlike(cardId, cardLikesContainer).then((res) => {
-      cardLikesContainer.textContent = res.likes.length;
-    });
+    unlike(cardId, cardLikesContainer)
+      .then((res) => {
+        cardLikesContainer.textContent = res.likes.length;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     event.target.classList.toggle("card__like-button_is-active");
   } else {
     console.log("Вы поставили лайк!");
-    putLike(cardId, cardLikesContainer).then((res) => {
-      cardLikesContainer.textContent = res.likes.length;
-    });
+    putLike(cardId, cardLikesContainer)
+      .then((res) => {
+        cardLikesContainer.textContent = res.likes.length;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     event.target.classList.toggle("card__like-button_is-active");
   }
 }
