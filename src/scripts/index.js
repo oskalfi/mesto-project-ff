@@ -99,26 +99,21 @@ const profileImage = document.querySelector(".profile__image");
 const formEditProfile = document.forms["edit-profile"]; // вынесем форму в отдельную переменную
 const inputProfileTitle = formEditProfile.elements.name; // обратились к полям формы, нашли поле с именем name
 const inputProfileDescription = formEditProfile.elements.description; // нашли поле с именем description
-const buttonSubmitEditProfile = formEditProfile.querySelector(".button");
 
 function submitEditProfile(event) {
   // опишем логику
   event.preventDefault();
-  buttonSubmitEditProfile.textContent = "Сохранение..."; // улучшим UX. Перед выполнением запроса на сервер изменим текст кнопки
-  profileTitle.textContent = inputProfileTitle.value;
-  profileDescription.textContent = inputProfileDescription.value;
-  editProfileInfo(
-    profileTitle.textContent,
-    profileDescription.textContent,
-    buttonSubmitEditProfile // передадим элемент кнопки, чтобы после выполнения промиса текст кнопки снова поменять на «Сохранить»
-  )
+  this.querySelector(".button").textContent = "Сохранение...";
+  editProfileInfo(inputProfileTitle.value, inputProfileDescription.value)
     .then((res) => {
-      buttonSubmitEditProfile.textContent = "Сохранить";
+      profileTitle.textContent = res.name;
+      profileDescription.textContent = res.about;
+      this.querySelector(".button").textContent = "Сохранить";
       closeModal(modalEditProfile);
     })
     .catch((error) => {
       console.log(error);
-      button.textContent = "Сохранить";
+      this.querySelector(".button").textContent = "Сохранить";
     });
 }
 
@@ -182,10 +177,7 @@ enableValidation(validationConfig);
 
 // Далее следует запрос на сервер, для получения данных профиля и карточек
 
-Promise.all([
-  getProfileInfo(profileTitle, profileDescription, profileImage),
-  getCards(),
-])
+Promise.all([getProfileInfo(), getCards()])
   .then((responseArray) => {
     // разобъем ответ сервера на две отдельные переменные
     const profileRes = responseArray[0];

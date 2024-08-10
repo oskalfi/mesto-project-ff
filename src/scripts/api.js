@@ -23,7 +23,7 @@ export const getCards = () => {
   });
 };
 
-export const editProfileInfo = (newName, newAbout, button) => {
+export const editProfileInfo = (newName, newAbout) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: {
@@ -67,6 +67,11 @@ export const deleteCardFromServer = (cardId) => {
     headers: {
       authorization: "bd73c30f-b229-43da-9111-af67cbae75e9",
     },
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
@@ -80,7 +85,7 @@ export const putLike = (cardId) => {
     if (res.ok) {
       return res.json();
     }
-    Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
@@ -94,7 +99,7 @@ export const unlike = (cardId) => {
     if (res.ok) {
       return res.json();
     }
-    Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
@@ -112,6 +117,6 @@ export const changeAvatar = (link) => {
     if (res.ok) {
       return res.json();
     }
-    Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };

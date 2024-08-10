@@ -32,11 +32,15 @@ export function createCard(
   if (cardOwnerId === currentProfileId) {
     // если текущий пользователь создатель карточки — тогда добавляем функцию удаления, иначе удаляем иконку удаления
     deleteButton.addEventListener("click", (event) => {
-      deleteCardFromServer(cardId).then((res) => {
-        console.log("Вы удалили карточку:");
-        console.log(res);
-        deleteCard(event);
-      });
+      deleteCardFromServer(cardId)
+        .then((res) => {
+          console.log("Вы удалили карточку");
+          console.log(res);
+          deleteCard(event);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     });
   } else {
     deleteButton.remove();
@@ -74,7 +78,7 @@ export function deleteCard(event) {
 export function likeCard(event, cardId, cardLikesContainer) {
   if (event.target.className.includes("is-active")) {
     console.log("Вы сняли лайк!");
-    unlike(cardId, cardLikesContainer)
+    unlike(cardId)
       .then((res) => {
         cardLikesContainer.textContent = res.likes.length;
         event.target.classList.toggle("card__like-button_is-active");
@@ -84,7 +88,7 @@ export function likeCard(event, cardId, cardLikesContainer) {
       });
   } else {
     console.log("Вы поставили лайк!");
-    putLike(cardId, cardLikesContainer)
+    putLike(cardId)
       .then((res) => {
         cardLikesContainer.textContent = res.likes.length;
         event.target.classList.toggle("card__like-button_is-active");
